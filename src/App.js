@@ -1,26 +1,66 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { Home, Contact, Task, Application} from './pages';
+import AppFooter from './components/commons/AppFooter'
+import './styles/reset.scss'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+
+  componentDidMount() {
+    const { pathname } = this.props.location
+    const { replace } = this.props.history
+
+    if ('/' === pathname) {
+      replace('/home')
+    }
+  }
+
+  renderNavs() {
+    const { navs } = this.props
+    return (
+      <Switch>
+        {
+          navs.map(item => {
+            return (
+              <Route key={item.id} path={item.path} component={item.component} exact={item.exact} />
+            )
+          })
+        }
+      </Switch>
+    )
+  }
+
+  renderFooter() {
+    return (
+      <div className="app-footer">
+        <AppFooter />
+      </div>
+    )
+  }
+
+  render() {
+    return (
+      <div>
+        { this.renderNavs() }
+        { this.renderFooter() }
+      </div>
+    )
+  }
 }
 
-export default App;
+App.defaultProps = {
+  navs: [
+    { id: 1, path: '/home', component: Home, exact: false },
+    { id: 2, path: '/contact', component: Contact, exact: false },
+    { id: 3, path: '/task', component: Task, exact: false },
+    { id: 4, path: '/application', component: Application, exact: false }
+
+  ]
+}
+
+export default withRouter(App);
